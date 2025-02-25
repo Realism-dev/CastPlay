@@ -45,4 +45,11 @@ git clone https://github.com/realism-dev/castplay.git
 устройство обнаруживается, подключение и передача видео отработало успешно пару раз за все время тестирования, в остальное время вылетает с ошибкой. 
 Возможно дело в устаревшей имитации приложения-приемника.
 
+### Документация
+В разработке использовал несколько источников:
+- [StackOverFlow](https://stackoverflow.com/questions/46632109/start-cast-session-for-a-cast-device)
+- [ExoPlayer](https://github.com/google/ExoPlayer/blob/release-v2/extensions/cast/src/main/java/com/google/android/exoplayer2/ext/cast/DefaultCastOptionsProvider.java)
+- [Habr](https://habr.com/ru/companies/mobileup/articles/442300/)
+- [Официальная документация и кодлабы Google](https://developers.google.com/cast?hl=ru)
+
 ## Лицензия: MIT License
