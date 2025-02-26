@@ -9,7 +9,6 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = black,
@@ -30,8 +29,6 @@ fun CastPlayTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val systemUIController = rememberSystemUiController()
-
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -41,9 +38,6 @@ fun CastPlayTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
-    // Устанавливаем цвет статус-бара
-    systemUIController.setSystemBarsColor(color = colorScheme.primary)
 
     MaterialTheme(
         colorScheme = colorScheme,

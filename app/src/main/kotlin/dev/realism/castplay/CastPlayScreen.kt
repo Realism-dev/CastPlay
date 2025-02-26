@@ -9,18 +9,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.mediarouter.app.MediaRouteButton
+import com.google.android.gms.cast.framework.CastButtonFactory
 import dev.realism.castplay.ui.theme.black
 import dev.realism.castplay.ui.theme.purple
 import dev.realism.castplay.ui.theme.white
@@ -31,26 +35,41 @@ fun CastPlayScreen(viewModel: CastPlayViewModel) {
     val status by viewModel.status.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState(null)
     val context = LocalContext.current
+    // Сохраняем MediaRouteButton
+    val mediaRouteButton = remember {
+        MediaRouteButton(context).apply {
+            CastButtonFactory.setUpMediaRouteButton(context, this)
+        }
+    }
 
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { viewModel.startCasting() },
+            onClick = { mediaRouteButton.performClick() },
             colors = ButtonDefaults.buttonColors(
-                    containerColor = purple, // Цвет фона кнопки
-                    contentColor = white   // Цвет текста кнопки
-           )
+                containerColor = purple, // Цвет фона кнопки
+                contentColor = white   // Цвет текста кнопки
+            )
         ) {
             Text("Отправить ссылку")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = status)
     }
+
+    // Используем AndroidView для скрытого отображения MediaRouteButton
+    AndroidView(
+        modifier = Modifier.alpha(0f),  // Скрываем кнопку
+        factory = {
+            mediaRouteButton.apply {
+                CastButtonFactory.setUpMediaRouteButton(context, this)
+            }
+        }
+    )
 
     LaunchedEffect(toastMessage) {
         toastMessage?.let {
@@ -72,7 +91,7 @@ fun CastPlayScreenPreview() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = {  },
+            onClick = { },
             colors = ButtonDefaults.buttonColors(
                 containerColor = purple, // Цвет фона кнопки
                 contentColor = Color.White   // Цвет текста кнопки

@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "dev.realism.castplay"
     compileSdk = 35
+    val javaVersion = JavaVersion.VERSION_17
 
     defaultConfig {
         applicationId = "dev.realism.castplay"
@@ -31,17 +32,22 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = javaVersion.toString()
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.get()
+    }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
     }
     packaging {
         resources {
@@ -66,15 +72,26 @@ dependencies {
     implementation(libs.compose.compiler)
     implementation(libs.compose.statusbar)
 
-    implementation(libs.play.services.cast)
     implementation(libs.play.services.cast.framework)
+    implementation(libs.androidx.mediarouter)
+    implementation(libs.androidx.appcompat)
 
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.archcore.testing)
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
