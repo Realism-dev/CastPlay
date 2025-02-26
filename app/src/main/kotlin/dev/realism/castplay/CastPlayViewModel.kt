@@ -12,8 +12,13 @@ class CastPlayViewModel(
     val toastMessage: StateFlow<String?> = castUseCase.toastMessage
 
     fun clearToastMessage() {
-        castUseCase.clearToastMessage()
-        Log.d(TAG,"Toast message cleared")
+        try {
+            castUseCase.clearToastMessage()
+            Log.d(TAG,"Toast message cleared")
+        }
+        catch (e:Exception){
+            Log.d(TAG,e.toString())
+        }
     }
 
     companion object {

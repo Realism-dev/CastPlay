@@ -10,8 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.mediarouter.media.MediaRouter
 import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.CastStateListener
 import com.google.android.gms.cast.framework.SessionManager
+import com.google.android.gms.cast.framework.SessionManagerListener
 import dev.realism.castplay.ui.theme.CastPlayTheme
 
 /**Главная Activity приложения, инициализирует компоненты MediaRouter, CastContext, ViewModel
@@ -45,5 +47,12 @@ class MainActivity : AppCompatActivity(), CastContextInterface {
 
     override fun addCastStateListener(listener: CastStateListener) {
         castContext.addCastStateListener(listener)
+    }
+
+    override fun addSessionManagerListener(
+        listener: SessionManagerListener<CastSession>,
+        java: Class<CastSession>
+    ) {
+        castContext.sessionManager.addSessionManagerListener(listener,java)
     }
 }

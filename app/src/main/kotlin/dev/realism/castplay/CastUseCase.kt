@@ -155,7 +155,7 @@ class CastUseCase(
             }
 
         }
-        castContext.sessionManager.addSessionManagerListener(listener,CastSession::class.java)
+        castContext.addSessionManagerListener(listener,CastSession::class.java)
         Log.d(TAG_CAST_SESSION, "addedCastSessionManagerListener")
     }
 
