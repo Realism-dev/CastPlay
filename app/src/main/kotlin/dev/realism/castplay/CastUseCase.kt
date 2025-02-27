@@ -6,8 +6,6 @@ import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.CastState
-import com.google.android.gms.cast.framework.CastStateListener
 import com.google.android.gms.cast.framework.SessionManagerListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -20,7 +18,7 @@ import kotlinx.coroutines.launch
 /**Класс для управления подключением и передачи ссылки на видео устройству-приемнику Google Cast */
 class CastUseCase(
     private val castContext: CastContextInterface,
-    private val viewModelScope: CoroutineScope
+    private val lifeCycleScope: CoroutineScope
 ) {
     private val _status = MutableStateFlow(STATUS_DEFAULT)
     val status: StateFlow<String> = _status.asStateFlow()
@@ -31,23 +29,21 @@ class CastUseCase(
     private var isConnecting = false
 
     init {
-        setCastStateListener()
         setCastSessionListener()
     }
 
     /**Метод отправи ссылки на видео на устройство-приемник Google Cast.*/
-    private fun sendLinkToDevice(): Boolean {
-        Log.e(TAG_SEND, "Send started")
-
+    private fun sendLinkToDevice(castContext: CastContextInterface): Boolean {
+        Log.d(TAG_SEND, "Send started")
         val castSession = castContext.sessionManager.currentCastSession
-        val mName = castSession?.castDevice?.modelName
-        val fName = castSession?.castDevice?.friendlyName
-        Log.d(TAG_SEND, "$mName , $fName")
-
         // Проверяем, есть ли активная сессия и устройство подключено
         if (castSession != null && castSession.isConnected) {
+            val mName = castSession.castDevice?.modelName
+            val fName = castSession.castDevice?.friendlyName
+            Log.d(TAG_SEND, "$mName , $fName")
+
             val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
-            mediaMetadata.putString(MediaMetadata.KEY_TITLE, "Видео по ссылке")
+            mediaMetadata.putString(MediaMetadata.KEY_TITLE, "Горячее видео")
 
             val mediaInfo = MediaInfo.Builder(VIDEO_LINK)
                 .setMetadata(mediaMetadata)
@@ -55,42 +51,31 @@ class CastUseCase(
                 .setContentType("video/mp4")
                 .build()
 
-            // Создаем объект MediaLoadOptions
             val mediaLoadOptions = MediaLoadOptions.Builder()
                 .setAutoplay(true)  // Включить автоматическое воспроизведение
                 .setPlayPosition(0) // Устанавливаем позицию воспроизведения с 0
                 .build()
 
             val remoteMediaClient = castSession.remoteMediaClient
-            remoteMediaClient?.let {
+            if(remoteMediaClient!=null) {
                 try {
                     // Загружаем медиа на устройство
-                    it.load(mediaInfo, mediaLoadOptions)
-                    Log.e(TAG_SEND, "Видео успешно отправлено")
-                    Log.e(TAG_SEND, "Send ended:Success")
+                    remoteMediaClient.load(mediaInfo, mediaLoadOptions)
+                    Log.d(TAG_SEND, "Видео успешно отправлено")
+                    Log.d(TAG_SEND, "Send ended:Success")
                     return true // Видео успешно отправлено
                 } catch (e: Exception) {
-                    Log.e(TAG_SEND, "Ошибка при отправке видео на устройство: ${e.message}")
-                    Log.e(TAG_SEND, "Send ended:Failed")
+                    Log.d(TAG_SEND, "Ошибка при отправке видео на устройство: ${e.message}")
+                    Log.d(TAG_SEND, "Send ended:Failed")
                     return false // Ошибка при отправке
                 }
             }
         } else {
             // Если сессия не активна или устройство не подключено
-            Log.e(TAG_SEND, "Сессия не активна или устройство не подключено.")
+            Log.d(TAG_SEND, "Сессия не активна или устройство не подключено.")
         }
-        Log.e(TAG_SEND, "Send ended:Failed")
+        Log.d(TAG_SEND, "Send ended:Failed")
         return false
-    }
-
-    /**Установка слушателя состояний передачи данных CastState*/
-    private fun setCastStateListener() {
-        val csListener = CastStateListener { castState ->
-            if (castState == CastState.CONNECTED) {
-                Log.d(TAG_STATE,"STATE CONNECTED")
-            }
-        }
-        castContext.addCastStateListener(csListener)
     }
 
     /**Установка слушателя CastSession*/
@@ -134,7 +119,7 @@ class CastUseCase(
             override fun onSessionStarted(p0: CastSession, p1: String) {
                 isConnecting = false
                 val device = p0.castDevice
-                val isSent = sendLinkToDevice()
+                val isSent = sendLinkToDevice(castContext)
                 if (isSent) {
                     setStatus(STATUS_SENDED)
                     setToastMessage("Видео успешно отправлено на ${device?.friendlyName}!")
@@ -161,7 +146,7 @@ class CastUseCase(
 
     /**Метод эмиттит сообщение в статусе с задержкой*/
     private fun setDefaultStatusWithDelay() {
-        viewModelScope.launch {
+        lifeCycleScope.launch {
             delay(2000)
             setStatus(STATUS_DEFAULT)
         }
@@ -172,7 +157,7 @@ class CastUseCase(
         isConnecting = true
         val device = castSession.castDevice
         val sendMessage = "Подключение к ${device!!.friendlyName}"
-        viewModelScope.launch {
+        lifeCycleScope.launch {
             while(isConnecting){
                 setStatus(sendMessage)
                 delay(300)
@@ -205,13 +190,11 @@ class CastUseCase(
     companion object {
         private const val TAG_CAST_SESSION = "CAST CAST_SESSION"
         private const val TAG_SEND = "CAST SENDING"
-        private const val TAG_STATE = "CAST STATE"
         private const val STATUS_DEFAULT = "Ожидание нажатия кнопки"
         private const val STATUS_CONNECTING_FAILED = "Ошибка при подключении"
         private const val STATUS_SEND_FAILED = "Ошибка передачи!"
         private const val STATUS_SENDED = "Видео отправлено!"
-        const val VIDEO_LINK =
+        private const val VIDEO_LINK =
             "https://videolink-test.mycdn.me/?pct=1&sig=6QNOvp0y3BE&ct=0&clientType=45&mid=193241622673&type=5"
     }
 }
-

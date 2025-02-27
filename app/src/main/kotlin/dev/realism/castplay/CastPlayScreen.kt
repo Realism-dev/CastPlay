@@ -1,11 +1,13 @@
 package dev.realism.castplay
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -18,14 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.mediarouter.app.MediaRouteButton
 import com.google.android.gms.cast.framework.CastButtonFactory
-import dev.realism.castplay.ui.theme.black
 import dev.realism.castplay.ui.theme.purple
 import dev.realism.castplay.ui.theme.white
 
@@ -48,28 +48,34 @@ fun CastPlayScreen(viewModel: CastPlayViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            onClick = { mediaRouteButton.performClick() },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = purple, // Цвет фона кнопки
-                contentColor = white   // Цвет текста кнопки
+        Box(Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+            contentAlignment = Alignment.Center
+        ){
+            Button(
+                onClick = { mediaRouteButton.performClick() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = purple, // Цвет фона кнопки
+                    contentColor = white   // Цвет текста кнопки
+                )
+            ) {
+                Text("Отправить ссылку")
+            }
+
+            // Используем AndroidView для скрытого отображения MediaRouteButton
+            AndroidView(
+                modifier = Modifier.alpha(0f),  // Скрываем кнопку
+                factory = {
+                    mediaRouteButton.apply {
+                        CastButtonFactory.setUpMediaRouteButton(context, this)
+                    }
+                }
             )
-        ) {
-            Text("Отправить ссылку")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = status)
     }
-
-    // Используем AndroidView для скрытого отображения MediaRouteButton
-    AndroidView(
-        modifier = Modifier.alpha(0f),  // Скрываем кнопку
-        factory = {
-            mediaRouteButton.apply {
-                CastButtonFactory.setUpMediaRouteButton(context, this)
-            }
-        }
-    )
 
     LaunchedEffect(toastMessage) {
         toastMessage?.let {
@@ -85,23 +91,28 @@ fun CastPlayScreen(viewModel: CastPlayViewModel) {
 fun CastPlayScreenPreview() {
     Column(
         modifier = Modifier
-            .background(black)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            onClick = { },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = purple, // Цвет фона кнопки
-                contentColor = Color.White   // Цвет текста кнопки
-            )
+        Box(Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+            contentAlignment = Alignment.Center
+        ){
+            Button(
+                onClick = {  },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = purple, // Цвет фона кнопки
+                    contentColor = white   // Цвет текста кнопки
+                )
+            ) {
+                Text("Отправить ссылку")
+            }
 
-        ) {
-            Text("Отправить ссылку")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Статус отправки")
+        Text(text = "Статус подключения")
     }
 }
 
