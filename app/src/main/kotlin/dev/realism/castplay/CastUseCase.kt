@@ -57,7 +57,7 @@ class CastUseCase(
                 .build()
 
             val remoteMediaClient = castSession.remoteMediaClient
-            if(remoteMediaClient!=null) {
+            if (remoteMediaClient != null) {
                 try {
                     // Загружаем медиа на устройство
                     remoteMediaClient.load(mediaInfo, mediaLoadOptions)
@@ -80,10 +80,10 @@ class CastUseCase(
 
     /**Установка слушателя CastSession*/
     private fun setCastSessionListener() {
-        val listener = object :SessionManagerListener<CastSession>{
+        val sessionListener = object : SessionManagerListener<CastSession> {
             override fun onSessionEnded(p0: CastSession, p1: Int) {
                 isConnecting = false
-                setStatus(STATUS_DEFAULT)
+                setStatusMessage(STATUS_DEFAULT)
                 Log.d(TAG_CAST_SESSION, "onSessionEnded")
             }
 
@@ -109,8 +109,8 @@ class CastUseCase(
 
             override fun onSessionStartFailed(p0: CastSession, p1: Int) {
                 isConnecting = false
-                setStatus(STATUS_CONNECTING_FAILED)
-                setToastMessage("Произошла ошибка при подключении")
+                setStatusMessage(STATUS_CONNECTING_FAILED)
+                setToastMessage(STATUS_CONNECTING_FAILED)
                 setDefaultStatusWithDelay()
                 val error = CastStatusCodes.getStatusCodeString(p1)
                 Log.d(TAG_CAST_SESSION, "onSessionStartFailed: error:$error")
@@ -118,14 +118,15 @@ class CastUseCase(
 
             override fun onSessionStarted(p0: CastSession, p1: String) {
                 isConnecting = false
-                val device = p0.castDevice
+                val deviceName = p0.castDevice?.friendlyName
+
                 val isSent = sendLinkToDevice(castContext)
                 if (isSent) {
-                    setStatus(STATUS_SENDED)
-                    setToastMessage("Видео успешно отправлено на ${device?.friendlyName}!")
+                    setStatusMessage(STATUS_SENDED)
+                    setToastMessage("Видео успешно отправлено на ${deviceName}!")
                 } else {
-                    setStatus(STATUS_SEND_FAILED)
-                    setToastMessage("Не удалось отправить видео на ${device?.friendlyName}!")
+                    setStatusMessage(STATUS_SEND_FAILED)
+                    setToastMessage("Не удалось отправить видео на ${deviceName}!")
                 }
                 Log.d(TAG_CAST_SESSION, "onSessionStarted")
             }
@@ -136,11 +137,12 @@ class CastUseCase(
             }
 
             override fun onSessionSuspended(p0: CastSession, p1: Int) {
+                isConnecting = false
                 Log.d(TAG_CAST_SESSION, "onSessionSuspended")
             }
 
         }
-        castContext.addSessionManagerListener(listener,CastSession::class.java)
+        castContext.addSessionManagerListener(sessionListener, CastSession::class.java)
         Log.d(TAG_CAST_SESSION, "addedCastSessionManagerListener")
     }
 
@@ -148,7 +150,7 @@ class CastUseCase(
     private fun setDefaultStatusWithDelay() {
         lifeCycleScope.launch {
             delay(2000)
-            setStatus(STATUS_DEFAULT)
+            setStatusMessage(STATUS_DEFAULT)
         }
     }
 
@@ -158,22 +160,22 @@ class CastUseCase(
         val device = castSession.castDevice
         val sendMessage = "Подключение к ${device!!.friendlyName}"
         lifeCycleScope.launch {
-            while(isConnecting){
-                setStatus(sendMessage)
+            while (isConnecting) {
+                setStatusMessage(sendMessage)
                 delay(300)
-                setStatus(sendMessage.plus("."))
+                setStatusMessage(sendMessage.plus("."))
                 delay(300)
-                setStatus(sendMessage.plus(".."))
+                setStatusMessage(sendMessage.plus(".."))
                 delay(300)
-                setStatus(sendMessage.plus("..."))
+                setStatusMessage(sendMessage.plus("..."))
                 delay(300)
             }
-            setStatus("Подключено к ${device.friendlyName}")
+            setStatusMessage("Подключено к ${device.friendlyName}")
         }
     }
 
     /**Метод эмиттит сообщение в статусе*/
-    private fun setStatus(status: String) {
+    private fun setStatusMessage(status: String) {
         _status.value = status
     }
 
@@ -186,6 +188,7 @@ class CastUseCase(
     fun clearToastMessage() {
         _toastMessage.value = null
     }
+
 
     companion object {
         private const val TAG_CAST_SESSION = "CAST CAST_SESSION"

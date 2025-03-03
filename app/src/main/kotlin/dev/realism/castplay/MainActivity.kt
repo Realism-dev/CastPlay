@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.mediarouter.media.MediaRouter
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.CastStateListener
 import com.google.android.gms.cast.framework.SessionManager
 import com.google.android.gms.cast.framework.SessionManagerListener
 import dev.realism.castplay.ui.theme.CastPlayTheme
@@ -44,10 +43,6 @@ class MainActivity : AppCompatActivity(), CastContextInterface {
 
     override val sessionManager: SessionManager
         get() = castContext.sessionManager
-
-    override fun addCastStateListener(listener: CastStateListener) {
-        castContext.addCastStateListener(listener)
-    }
 
     override fun addSessionManagerListener(
         listener: SessionManagerListener<CastSession>,

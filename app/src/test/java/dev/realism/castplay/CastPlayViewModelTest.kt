@@ -35,7 +35,6 @@ class CastPlayViewModelTest {
             every { addSessionManagerListener(any()) } just Runs
         }
         every { castContext.sessionManager } returns sessionManager
-        every { castContext.addCastStateListener(any()) } just Runs
 
         // Создаем объект CastUseCase с мокированными зависимостями
         castUseCase = mockk<CastUseCase>()
