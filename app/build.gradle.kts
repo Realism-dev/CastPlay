@@ -1,13 +1,17 @@
+import java.util.Locale
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    jacoco
 }
 
 android {
     namespace = "dev.realism.castplay"
     compileSdk = 35
     val javaVersion = JavaVersion.VERSION_17
+
 
     defaultConfig {
         applicationId = "dev.realism.castplay"
@@ -30,6 +34,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
     }
     compileOptions {
         sourceCompatibility = javaVersion
@@ -43,11 +51,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.get()
-    }
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
     }
     packaging {
         resources {
@@ -94,4 +97,55 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+// Для корректной работы Jacoco +Roboelectric нужно добавить в конфиг -> Specify Classes and Packages-> добавить директорию приложения
+val exclusions = listOf(
+    "**/R.class",
+    "**/R\$*.class",
+    "**/BuildConfig.*",
+    "**/Manifest*.*",
+    "**/*Test*.*"
+)
+
+tasks.withType(Test::class) {
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
+}
+
+android {
+    applicationVariants.all(closureOf<com.android.build.gradle.internal.api.BaseVariantImpl> {
+        val variant = this@closureOf.name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
+
+        val unitTests = "test${variant}UnitTest"
+        val androidTests = "connected${variant}AndroidTest"
+
+        tasks.register<JacocoReport>("Jacoco${variant}CodeCoverage") {
+            dependsOn(listOf(unitTests, androidTests))
+            group = "Reporting"
+            description = "Execute ui and unit tests, generate and combine Jacoco coverage report"
+            reports {
+                xml.required.set(true)
+                html.required.set(true)
+            }
+            sourceDirectories.setFrom(layout.projectDirectory.dir("src/main"))
+            classDirectories.setFrom(files(
+                fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+                    exclude(exclusions)
+                },
+                fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+                    exclude(exclusions)
+                }
+            ))
+            executionData.setFrom(files(
+                fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+            ))
+        }
+    })
 }

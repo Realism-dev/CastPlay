@@ -8,9 +8,7 @@ import com.google.android.gms.cast.framework.SessionManager
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.api.PendingResult
-import io.mockk.Awaits
 import io.mockk.Runs
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
@@ -25,7 +23,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -153,10 +150,10 @@ class CastUseCaseTest {
         return field.get(this) as Boolean
     }
 
-    private fun CastUseCase.setIsConnecting(value:Boolean) {
+    private fun CastUseCase.setIsConnecting(value: Boolean) {
         val field = this::class.java.getDeclaredField("isConnecting")
         field.isAccessible = true
-        field.setBoolean(this,value)
+        field.setBoolean(this, value)
     }
 
 //    private fun CastUseCase.getSessionListener(): SessionManagerListener<CastSession> {
@@ -478,7 +475,7 @@ class CastUseCaseTest {
     }
 
     @Test
-    fun `onSessionStarting should call setConnectingStatusWithDelay and set isConnecting = true`(){
+    fun `onSessionStarting should call setConnectingStatusWithDelay and set isConnecting = true`() {
         // Мокаем зависимости и захватываем слушателя
         val sessionListenerSlot = slot<SessionManagerListener<CastSession>>()
         every {
@@ -518,7 +515,7 @@ class CastUseCaseTest {
     }
 
     @Test
-    fun `onSessionEnded should set default status and set isConnecting = false`(){
+    fun `onSessionEnded should set default status and set isConnecting = false`() {
         // Статусы и тосты
         val defaultStatus = castUseCase.getCompanionObjectConstants("STATUS_DEFAULT")
 
@@ -547,7 +544,7 @@ class CastUseCaseTest {
 
     /**Проверяем остальные колбэки, у всех поведение одинаковое - выставить isConnecting = false*/
     @Test
-    fun `others session callbacks should set isConnecting = false`(){
+    fun `others session callbacks should set isConnecting = false`() {
         // Мокаем зависимости и захватываем слушателя
         val sessionListenerSlot = slot<SessionManagerListener<CastSession>>()
         every {
@@ -569,22 +566,22 @@ class CastUseCaseTest {
 
         // Проверяем onSessionResumeFailed
         castUseCaseSpyk.setIsConnecting(true)
-        sessionListenerSlot.captured.onSessionResumeFailed(castSessionMocked,0)
+        sessionListenerSlot.captured.onSessionResumeFailed(castSessionMocked, 0)
         assertFalse(castUseCaseSpyk.getIsConnecting())// isConnecting = false
 
         // Проверяем onSessionResumed
         castUseCaseSpyk.setIsConnecting(true)
-        sessionListenerSlot.captured.onSessionResumed(castSessionMocked,true)
+        sessionListenerSlot.captured.onSessionResumed(castSessionMocked, true)
         assertFalse(castUseCaseSpyk.getIsConnecting())// isConnecting = false
 
         // Проверяем onSessionResuming
         castUseCaseSpyk.setIsConnecting(true)
-        sessionListenerSlot.captured.onSessionResuming(castSessionMocked,"true")
+        sessionListenerSlot.captured.onSessionResuming(castSessionMocked, "true")
         assertFalse(castUseCaseSpyk.getIsConnecting())// isConnecting = false
 
         // Проверяем onSessionSuspended
         castUseCaseSpyk.setIsConnecting(true)
-        sessionListenerSlot.captured.onSessionSuspended(castSessionMocked,0)
+        sessionListenerSlot.captured.onSessionSuspended(castSessionMocked, 0)
         assertFalse(castUseCaseSpyk.getIsConnecting())// isConnecting = false
     }
 }
