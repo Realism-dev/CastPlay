@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.DEFAULT_MANIFEST_NAME)
+@Config(manifest = Config.NONE)
 @ExperimentalCoroutinesApi
 class CastPlayViewModelTest {
     private lateinit var castUseCase: CastUseCase
