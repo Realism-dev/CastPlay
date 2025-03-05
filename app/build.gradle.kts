@@ -12,7 +12,6 @@ android {
     compileSdk = 35
     val javaVersion = JavaVersion.VERSION_17
 
-
     defaultConfig {
         applicationId = "dev.realism.castplay"
         minSdk = 26
@@ -65,9 +64,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
 
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
@@ -81,11 +78,7 @@ dependencies {
 
 
     testImplementation(libs.junit)
-    testImplementation(libs.mockito)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.mockito.inline)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.androidx.archcore.testing)
     testImplementation(libs.mockk)
     testImplementation(libs.robolectric)
 
@@ -93,9 +86,11 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-
+    androidTestImplementation (libs.androidx.rules)
+    androidTestImplementation (libs.androidx.runner)
 
     debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.compose.material3)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 

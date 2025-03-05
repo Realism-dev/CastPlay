@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.StateFlow
 /** Основная viewmodel приложения, подписывается на обновления статуса и транслирует сообщения для тоста*/
 class CastPlayViewModel(
     private val castUseCase: CastUseCase
-) : ViewModel() {
-    val status: StateFlow<String> = castUseCase.status
-    val toastMessage: StateFlow<String?> = castUseCase.toastMessage
+) : ViewModel(),CastPlayViewModelInterface {
+    override val status: StateFlow<String> = castUseCase.status
+    override val toastMessage: StateFlow<String?> = castUseCase.toastMessage
 
-    fun clearToastMessage() {
+    override fun clearToastMessage() {
         try {
             castUseCase.clearToastMessage()
             Log.d(TAG,"Toast message cleared")

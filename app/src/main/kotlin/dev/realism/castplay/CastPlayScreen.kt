@@ -1,6 +1,7 @@
 package dev.realism.castplay
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,12 +27,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.mediarouter.app.MediaRouteButton
 import com.google.android.gms.cast.framework.CastButtonFactory
+import dev.realism.castplay.ui.theme.CastPlayTheme
+import dev.realism.castplay.ui.theme.black
 import dev.realism.castplay.ui.theme.purple
 import dev.realism.castplay.ui.theme.white
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**Главный экран приложения, рисует простой фон и кнопку по центру, под кнопкой отображает статус подключения и выводит тосты.*/
 @Composable
-fun CastPlayScreen(viewModel: CastPlayViewModel) {
+fun CastPlayScreen(viewModel: CastPlayViewModelInterface) {
     val status by viewModel.status.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState(null)
     val context = LocalContext.current
@@ -44,6 +49,7 @@ fun CastPlayScreen(viewModel: CastPlayViewModel) {
 
     Column(
         modifier = Modifier
+            .background(black)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -74,7 +80,7 @@ fun CastPlayScreen(viewModel: CastPlayViewModel) {
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = status)
+        Text(text = status, color = white)
     }
 
     LaunchedEffect(toastMessage) {
@@ -85,34 +91,21 @@ fun CastPlayScreen(viewModel: CastPlayViewModel) {
     }
 }
 
+
 /**Preview главного экрана*/
 @Preview(showBackground = true)
 @Composable
 fun CastPlayScreenPreview() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-            contentAlignment = Alignment.Center
-        ){
-            Button(
-                onClick = {  },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = purple, // Цвет фона кнопки
-                    contentColor = white   // Цвет текста кнопки
-                )
-            ) {
-                Text("Отправить ссылку")
-            }
+    val previewViewModel = object:CastPlayViewModelInterface{
+        override val status: StateFlow<String>
+            get() = MutableStateFlow("Ожидание нажатия кнопки")
+        override val toastMessage: StateFlow<String?>
+            get() = MutableStateFlow("TOAST_DEFAULT")
 
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Статус подключения")
+        override fun clearToastMessage() {}
+    }
+    CastPlayTheme {
+        CastPlayScreen((previewViewModel))
     }
 }
 
