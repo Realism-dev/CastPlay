@@ -1,5 +1,3 @@
-package dev.realism.castplay
-
 import android.util.Log
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadOptions
@@ -8,6 +6,9 @@ import com.google.android.gms.cast.framework.SessionManager
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.api.PendingResult
+import dev.realism.castplay.CastContextInterface
+import dev.realism.castplay.CastPlayViewModel
+import dev.realism.castplay.CastUseCase
 import io.mockk.Runs
 import io.mockk.coVerify
 import io.mockk.every

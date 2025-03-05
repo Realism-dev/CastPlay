@@ -1,9 +1,8 @@
-package dev.realism.castplay
-
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import dev.realism.castplay.MainActivity
 import org.junit.Rule
 import org.junit.Test
 
