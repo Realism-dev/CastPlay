@@ -88,10 +88,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation (libs.androidx.rules)
     androidTestImplementation (libs.androidx.runner)
+    androidTestImplementation (libs.kaspresso)
+    androidTestImplementation (libs.kaspresso.compose.support)
+    androidTestImplementation (libs.androidx.junit.ktx)
+
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.compose.material3)
     debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.material)//Нужно для подключения Kaspresso(баг)
 }
 
 // Для корректной работы Jacoco +Roboelectric нужно добавить в конфиг -> Specify Classes and Packages-> добавить директорию приложения

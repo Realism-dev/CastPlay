@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -49,6 +50,7 @@ fun CastPlayScreen(viewModel: CastPlayViewModelInterface) {
 
     Column(
         modifier = Modifier
+            .testTag("CastPlayScreen")
             .background(black)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -61,6 +63,7 @@ fun CastPlayScreen(viewModel: CastPlayViewModelInterface) {
         ){
             Button(
                 onClick = { mediaRouteButton.performClick() },
+                Modifier.testTag("sendLinkButton"),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = purple, // Цвет фона кнопки
                     contentColor = white   // Цвет текста кнопки
@@ -71,7 +74,9 @@ fun CastPlayScreen(viewModel: CastPlayViewModelInterface) {
 
             // Используем AndroidView для скрытого отображения MediaRouteButton
             AndroidView(
-                modifier = Modifier.alpha(0f),  // Скрываем кнопку
+                modifier = Modifier
+                    .testTag("mediaButton")
+                    .alpha(0f),  // Скрываем кнопку
                 factory = {
                     mediaRouteButton.apply {
                         CastButtonFactory.setUpMediaRouteButton(context, this)
@@ -80,7 +85,9 @@ fun CastPlayScreen(viewModel: CastPlayViewModelInterface) {
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = status, color = white)
+        Text(text = status,
+            color = white,
+            modifier = Modifier.testTag("statusText") )
     }
 
     LaunchedEffect(toastMessage) {
