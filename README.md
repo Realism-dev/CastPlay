@@ -37,6 +37,20 @@ git clone https://github.com/realism-dev/castplay.git
 Подключите Android-устройство или запустите эмулятор.
 Нажмите Run в Android Studio.
 
+## Запуск тестов:
+- UI-тесты находятся в директории проекта: CastPlay->app->androidTest->kotlin->androidTest
+- Unit-тесты находятся в директории проекта: CastPlay->app->androidTest->kotlin->test[unitTest]
+### 1. Инструментальные(UI) тесты:
+- **Run All UI Tests** - запуск всех UI-тестов
+- **MainActivityTest** - тесты для MainActivity
+- **CastPlayScreenTest** - тесты для Composable-функции CastPlayScreen
+### 2. Unit-тесты:
+- **Run All Unit Tests** - запуск всех unit-тестов
+- **CastUseCaseTest** - тестирование бизнес-логики в CastUseCase
+- **CastPlayViewModelTest** - тестирование viewmodel
+### 3. Unit-тесты с покрытием:
+Запускаются аналогично unit-тестам, но нужно выбрать Run->Run *имя unit-теста* with Coverage в меню Android Studio
+
 ## Проблемы/вопросы, возникшие в процессе разработки
 
 ### Тестирование приложения
@@ -54,4 +68,4 @@ git clone https://github.com/realism-dev/castplay.git
 - [Habr](https://habr.com/ru/companies/mobileup/articles/442300/)
 - [Официальная документация и кодлабы Google](https://developers.google.com/cast?hl=ru)
 
-## Лицензия: [MIT License](https://github.com/Realism-dev/CastPlay/blob/master/LICENSE)
+## [MIT License](https://github.com/Realism-dev/CastPlay/blob/master/LICENSE)
