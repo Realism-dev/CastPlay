@@ -3,11 +3,14 @@
 Приложение разрабатывалось в качестве тестового задания в VK.
 
 ## Стек технологий:
-- **Kotlin** — основной язык разработки.
-- **Kotlin Coroutines** — для работы с многопоточностью.
-- **MVVM** — архитектурные паттерны для разделения данных, логики и UI.
-- **Jetpack Compose** - для работы с View
-- **StateFlow / ViewModel** — для реактивного обновления UI.
+- **Kotlin** — основной язык разработки
+- **Kotlin Coroutines** — для работы с многопоточностью
+- **MVVM** — архитектурные паттерны для разделения данных, логики и UI
+- **Jetpack Compose** - для работы с View- 
+- **StateFlow / ViewModel** — для реактивного обновления UI
+- **JUnit4, Robolectric, Mockk** - unit-тесты
+- **Jacoco** - процент покрытия кода unit-тестами
+- **Kaspresso, Espresso** - UI-тесты
 
 ## Требования:
 - **Android Studio** последней версии.
@@ -42,14 +45,13 @@ git clone https://github.com/realism-dev/castplay.git
 #### Windows 11: X-Mirage, AirServer
 устройство обнаруживается, но подключение невозможно
 #### Android 10: CastReceiver, AirReceiverLite
-устройство обнаруживается, подключение и передача видео отработало успешно пару раз за все время тестирования, в остальное время вылетает с ошибкой. 
-Возможно дело в устаревшей имитации приложения-приемника.
+Решили вопрос с тестированием приложения.
 
-### Документация
+### Нерелеватная/устаревшая документация
 В разработке использовал несколько источников:
 - [StackOverFlow](https://stackoverflow.com/questions/46632109/start-cast-session-for-a-cast-device)
 - [ExoPlayer](https://github.com/google/ExoPlayer/blob/release-v2/extensions/cast/src/main/java/com/google/android/exoplayer2/ext/cast/DefaultCastOptionsProvider.java)
 - [Habr](https://habr.com/ru/companies/mobileup/articles/442300/)
 - [Официальная документация и кодлабы Google](https://developers.google.com/cast?hl=ru)
 
-## Лицензия: MIT License
+## Лицензия: [MIT License](https://github.com/Realism-dev/CastPlay/blob/master/LICENSE)
