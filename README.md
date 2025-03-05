@@ -54,4 +54,4 @@ git clone https://github.com/realism-dev/castplay.git
 - [Habr](https://habr.com/ru/companies/mobileup/articles/442300/)
 - [Официальная документация и кодлабы Google](https://developers.google.com/cast?hl=ru)
 
-## Лицензия: [MIT License](https://github.com/Realism-dev/CastPlay/blob/master/LICENSE)
+## [MIT License](https://github.com/Realism-dev/CastPlay/blob/master/LICENSE)
